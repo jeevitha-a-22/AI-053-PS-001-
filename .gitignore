@@ -1,0 +1,12 @@
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.coverage
+htmlcov/
+*.log
+.venv/
+env/
+.idea/
+.vscode/
+scratch_verify.py

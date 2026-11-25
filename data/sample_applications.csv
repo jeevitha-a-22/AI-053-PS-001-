@@ -1,0 +1,9 @@
+application_id,applicant_id,amount,tenure_months,purpose,application_date
+LNAPP001,APP001,500000,36,Home Improvement,2025-01-01
+LNAPP002,APP002,800000,60,Business Expansion,2025-01-01
+LNAPP003,APP003,300000,24,Medical Emergency,2025-01-01
+LNAPP004,APP004,400000,36,Debt Consolidation,2026-06-01
+LNAPP005,APP005,500000,36,Personal Travel,2025-01-01
+LNAPP006,APP006,200000,12,Emergency,2025-01-01
+LNAPP007,APP007,300000,24,Wedding Expenses,2025-01-01
+LNAPP008,APP008,1200000,36,Vehicle Purchase,2025-01-01

@@ -1,3 +1,4 @@
+
 """
 Tests for Repayment Engine (Member 2).
 Covers on-time, grace period, late payment with penal interest, and multiple repayments.
@@ -13,7 +14,7 @@ from src.services.approval_engine import ApprovalEngine
 from src.services.repayment_engine import RepaymentEngine
 
 
-def setup_test_loan():
+def create_test_loan():
     applicant = Applicant(
         "APP_REP", date(1990, 1, 1), Decimal('100000'), Decimal('0'),
         EmploymentType.SALARIED, CityTier.TIER_1, credit_score=750
@@ -25,7 +26,7 @@ def setup_test_loan():
 
 
 def test_on_time_repayment():
-    loan = setup_test_loan()
+    loan = create_test_loan()
     inst_1 = loan.schedule[0]
     due_date = inst_1.due_date  # 2025-02-01
     emi_amount = inst_1.emi_amount
@@ -41,7 +42,7 @@ def test_on_time_repayment():
 
 
 def test_grace_period_repayment_no_penalty():
-    loan = setup_test_loan()
+    loan = create_test_loan()
     inst_1 = loan.schedule[0]
     # Paid 4 days after due date (within 5-day grace period: BR-08)
     pay_date = date(2025, 2, 5)
@@ -54,7 +55,7 @@ def test_grace_period_repayment_no_penalty():
 
 
 def test_late_repayment_with_penal_interest():
-    loan = setup_test_loan()
+    loan = create_test_loan()
     inst_1 = loan.schedule[0]
     # Paid 15 days after due date (past 5-day grace period: BR-08)
     pay_date = date(2025, 2, 16)
@@ -68,7 +69,7 @@ def test_late_repayment_with_penal_interest():
 
 
 def test_partial_repayment():
-    loan = setup_test_loan()
+    loan = create_test_loan()
     inst_1 = loan.schedule[0]
     # Pay half the EMI amount
     half_amount = inst_1.emi_amount / Decimal('2')

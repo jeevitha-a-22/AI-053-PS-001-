@@ -1,3 +1,4 @@
+
 """
 Tests for Foreclosure Engine (Member 2).
 Implements BR-10:
@@ -17,7 +18,7 @@ from src.services.repayment_engine import RepaymentEngine
 from src.services.foreclosure_engine import ForeclosureEngine
 
 
-def setup_loan_for_foreclosure(emis_to_pay: int):
+def create_foreclosure_loan(emis_to_pay: int):
     applicant = Applicant(
         "APP_FC", date(1990, 1, 1), Decimal('200000'), Decimal('0'),
         EmploymentType.SALARIED, CityTier.TIER_1, credit_score=780
@@ -36,14 +37,14 @@ def setup_loan_for_foreclosure(emis_to_pay: int):
 
 
 def test_br10_foreclosure_ineligible_under_12_emis():
-    loan = setup_loan_for_foreclosure(11)
+    loan = create_foreclosure_loan(11)
     quote = ForeclosureEngine.calculate_foreclosure_quote(loan, date(2022, 12, 15))
     assert not quote.is_eligible
     assert "BR-10: Foreclosure only allowed after 12 EMIs" in quote.ineligibility_reasons[0]
 
 
 def test_br10_foreclosure_with_4_percent_fee():
-    loan = setup_loan_for_foreclosure(12)
+    loan = create_foreclosure_loan(12)
     # Month 13 (within 36 months) -> 4% fee
     quote_date = date(2023, 1, 15)
     quote = ForeclosureEngine.calculate_foreclosure_quote(loan, quote_date)
@@ -61,7 +62,7 @@ def test_br10_foreclosure_with_4_percent_fee():
 
 def test_br10_foreclosure_zero_fee_after_36_months():
     # 37 EMIs paid -> older than 36 months
-    loan = setup_loan_for_foreclosure(37)
+    loan = create_foreclosure_loan(37)
     quote_date = date(2025, 2, 15)
     quote = ForeclosureEngine.calculate_foreclosure_quote(loan, quote_date)
     assert quote.is_eligible

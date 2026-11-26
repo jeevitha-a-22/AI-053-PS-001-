@@ -1,3 +1,4 @@
+
 """
 Tests for Classification Engine (Member 2).
 Implements BR-11:
@@ -19,7 +20,7 @@ from src.services.repayment_engine import RepaymentEngine
 from src.services.classification_engine import ClassificationEngine
 
 
-def setup_loan():
+def create_test_loan():
     applicant = Applicant(
         "APP_CLS", date(1990, 1, 1), Decimal('100000'), Decimal('0'),
         EmploymentType.SALARIED, CityTier.TIER_1, credit_score=750
@@ -31,7 +32,9 @@ def setup_loan():
 
 
 def test_br11_classification_progression_and_catch_up():
-    loan = setup_loan()
+    loan = create_test_loan()
+    test_date = date(2025, 5, 12)
+
     # Installment 1 is due 2025-02-01
 
     # On due date -> STANDARD (DPD 0)
@@ -55,14 +58,14 @@ def test_br11_classification_progression_and_catch_up():
     assert cls == Classification.SMA_2
 
     # 100 days overdue -> NPA (DPD 100)
-    dpd, cls = ClassificationEngine.update_loan_status(loan, date(2025, 5, 12))
+    dpd, cls = ClassificationEngine.update_loan_status(loan, test_date)
     assert dpd == 100
     assert cls == Classification.NPA
 
     # Full catch-up payment restores STANDARD!
     # Amount needed = unpaid EMIs + accumulated penal interest
     total_due = loan.total_overdue_emi + loan.total_penal_interest_due
-    rep = Repayment("REP_CATCHUP", loan.loan_id, date(2025, 5, 12), total_due, RepaymentType.EMI)
+    rep = Repayment("REP_CATCHUP", loan.loan_id, test_date, total_due, RepaymentType.EMI)
     RepaymentEngine.process_repayment(loan, rep)
 
     assert loan.dpd == 0

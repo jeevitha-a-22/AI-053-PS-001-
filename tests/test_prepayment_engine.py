@@ -1,3 +1,4 @@
+
 """
 Tests for Prepayment Engine (Member 2).
 Implements BR-09:
@@ -18,7 +19,7 @@ from src.services.repayment_engine import RepaymentEngine
 from src.services.prepayment_engine import PrepaymentEngine
 
 
-def setup_loan_with_paid_emis(emis_to_pay: int):
+def create_loan_with_paid_emis(emis_to_pay: int):
     applicant = Applicant(
         "APP_PREP", date(1990, 1, 1), Decimal('150000'), Decimal('0'),
         EmploymentType.SALARIED, CityTier.TIER_1, credit_score=780
@@ -37,7 +38,7 @@ def setup_loan_with_paid_emis(emis_to_pay: int):
 
 def test_br09_prepayment_ineligible_before_6_emis():
     # Only 5 EMIs paid
-    loan = setup_loan_with_paid_emis(5)
+    loan = create_loan_with_paid_emis(5)
     eligible, errors = PrepaymentEngine.check_prepayment_eligibility(
         loan, Decimal('30000'), date(2025, 6, 1)
     )
@@ -47,7 +48,7 @@ def test_br09_prepayment_ineligible_before_6_emis():
 
 def test_br09_prepayment_minimum_amount_violation():
     # 6 EMIs paid, but amount < 25,000
-    loan = setup_loan_with_paid_emis(6)
+    loan = create_loan_with_paid_emis(6)
     eligible, errors = PrepaymentEngine.check_prepayment_eligibility(
         loan, Decimal('20000'), date(2025, 7, 1)
     )
@@ -56,7 +57,7 @@ def test_br09_prepayment_minimum_amount_violation():
 
 
 def test_br09_prepayment_tenure_reduction_with_fee():
-    loan = setup_loan_with_paid_emis(6)
+    loan = create_loan_with_paid_emis(6)
     orig_tenure = loan.tenure_months
     orig_emi = loan.monthly_emi
     prepay_amount = Decimal('50000')
@@ -77,7 +78,7 @@ def test_br09_prepayment_tenure_reduction_with_fee():
 
 
 def test_br09_prepayment_emi_reduction():
-    loan = setup_loan_with_paid_emis(6)
+    loan = create_loan_with_paid_emis(6)
     orig_emi = loan.monthly_emi
     prepay_amount = Decimal('50000')
 
